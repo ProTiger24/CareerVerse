@@ -1,4 +1,4 @@
-const AI_BACKEND_URL = 'http://localhost:8000';
+const AI_BACKEND_URL = process.env.REACT_APP_AI_BACKEND_URL || 'http://localhost:8000';
 
 // ============ BASIC CHAT ============
 export const askAICoach = async (query, context = 'career coaching for software engineers') => {
