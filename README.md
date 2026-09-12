@@ -132,5 +132,168 @@ Daily Quran verses & hadiths with beautiful background images
 - **GitHub** — CI/CD
 
 ---
+┌──────────────────────────────────────────────┐
+│ USER BROWSER │
+└────────────────────┬───────────────────────────┘
+│
+▼
+┌──────────────────────────────────────────────┐
+│ FRONTEND (React + Tailwind) │
+│ Deployed on Vercel │
+└─────┬────────────────────────────┬────────────┘
+│ Firebase SDK │ REST API
+▼ ▼
+┌──────────────────┐ ┌──────────────────────┐
+│ FIREBASE │ │ BACKEND (FastAPI) │
+│ • Auth │ │ Deployed on Render │
+│ • Realtime DB │ │ • Gemini API │
+│ • Storage │ │ • AI endpoints │
+└──────────────────┘ └──────────────────────┘
 
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js >= 16.x
+- Python >= 3.11
+- Firebase account
+- Google Gemini API key
+
+### Frontend Setup
+
+```bash
+git clone https://github.com/ProTiger24/CareerVerse.git
+cd CareerVerse
+npm install
+cp .env.example .env
+npm start
+```
+
+Frontend runs on http://localhost:3000
+
+### Backend Setup
+
+```bash
+cd backend
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env
+uvicorn app.main:app --reload --port 8000
+```
+
+Backend runs on http://localhost:8000
+API Docs: http://localhost:8000/docs
+
+## 🔐 Environment Variables
+
+### Frontend (.env)
+
+```env
+REACT_APP_FIREBASE_API_KEY=your_firebase_api_key
+REACT_APP_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+REACT_APP_FIREBASE_PROJECT_ID=your_project_id
+REACT_APP_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+REACT_APP_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+REACT_APP_FIREBASE_APP_ID=your_app_id
+REACT_APP_YOUTUBE_API_KEY=your_youtube_api_key
+REACT_APP_AI_BACKEND_URL=https://your-backend.onrender.com
+```
+
+### Backend (.env)
+
+```env
+GEMINI_API_KEY=your_gemini_api_key
+```
+
+⚠️ Never commit .env files. Use .env.example as template.
+
+## 🌐 Deployment
+
+### Frontend — Vercel
+1. Push code to GitHub
+2. Import repo on Vercel
+3. Add environment variables
+4. Deploy (auto on every push)
+
+### Backend — Render
+1. Create new Web Service on Render
+2. Connect GitHub repository
+3. Configure:
+   - Root Directory: backend
+   - Build Command: pip install -r requirements.txt
+   - Start Command: python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT
+   - Python Version: 3.11.9
+4. Add env vars: GEMINI_API_KEY, PYTHON_VERSION=3.11.9
+5. Deploy
+
+## 📁 Project Structure
+
+CareerVerse/
+├── src/
+│ ├── components/
+│ │ ├── auth/
+│ │ ├── common/
+│ │ ├── Analytics.jsx
+│ │ ├── CalendarIntegration.jsx
+│ │ ├── CodingHub.jsx
+│ │ ├── DigitalLibrary.jsx
+│ │ ├── Motivation.jsx
+│ │ ├── QuizTest.jsx
+│ │ ├── ReportSection.jsx
+│ │ ├── StudyPlanner.jsx
+│ │ ├── TaskSection.jsx
+│ │ ├── TestHistory.jsx
+│ │ ├── VivaPractice.jsx
+│ │ └── YouTubeSection.jsx
+│ ├── context/AuthContext.js
+│ ├── firebase/config.js
+│ ├── pages/
+│ ├── services/
+│ ├── styles/
+│ ├── App.jsx
+│ └── index.jsx
+├── backend/
+│ ├── app/
+│ │ ├── routers/
+│ │ ├── utils/gemini_helper.py
+│ │ └── main.py
+│ ├── requirements.txt
+│ └── runtime.txt
+└── README.md
+
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create feature branch: `git checkout -b feature/amazing`
+3. Commit: `git commit -m "Add: amazing feature"`
+4. Push: `git push origin feature/amazing`
+5. Open Pull Request
+
+## 📄 License
+
+MIT License — see LICENSE for details.
+
+## 👨‍💻 Author
+
+**Abdul Alim** (ProTiger24)
+- 🎓 CSE Student, BUBT
+- 🔗 GitHub: [@ProTiger24](https://github.com/ProTiger24)
+- 📧 Email: abdulalim528260@gmail.com
+
+<div align="center">
+
+⭐ If you find this helpful, please give it a star!
+
+Built with ❤️ by Abdul Alim
+
+</div>
+EOF
+
+git add README.md
+git commit -m "docs: update professional README"
+git push origin main
 
