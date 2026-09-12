@@ -407,20 +407,9 @@ Render for hosting the backend
 
 The open-source community for amazing tools and libraries
 
-<div align="center">
+
 ⭐ If you find this project helpful, please give it a star!
-Built with ❤️ by Abdul Alim
+ Built with ❤️ by Abdul Alim
 
-</div> ```
-🚀 Step 2: Save এবং Push করুন
-Save করুন: Ctrl+O → Enter → Ctrl+X
 
-তারপর Terminal-এ:
-
-bash
-cd /home/abdul-alim/Documents/careerverse
-
-git add README.md
-git commit -m "docs: add professional README with badges, architecture & screenshots"
-git push origin main
 
