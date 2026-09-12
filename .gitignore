@@ -1,0 +1,42 @@
+# Environment Variables (CRITICAL)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+backend/.env
+
+# Dependencies
+node_modules/
+backend/venv/
+venv/
+__pycache__/
+*.py[cod]
+*.so
+
+# Build
+/build
+/dist
+build/
+
+# Testing
+/coverage
+.pytest_cache/
+
+# Logs
+npm-debug.log*
+*.log
+logs/
+
+# Editors
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Misc
+*.bak
+*.backup
+serviceAccountKey.json
+.firebase/

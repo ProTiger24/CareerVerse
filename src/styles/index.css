@@ -1,0 +1,79 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { box-sizing: border-box; }
+  body {
+    @apply bg-[#0A0E1A] text-[#F9FAFB];
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: #0F1420; }
+  ::-webkit-scrollbar-thumb { background: #1F2937; border-radius: 10px; }
+  ::-webkit-scrollbar-thumb:hover { background: #374151; }
+}
+
+@layer components {
+  .card { @apply bg-[#161B2E] border border-[#1F2937] rounded-2xl; }
+  .card-hover { @apply transition-all duration-300 hover:border-[#6366F1]/40 hover:shadow-lg hover:shadow-[#6366F1]/5; }
+  .btn-primary { @apply bg-[#6366F1] hover:bg-[#4F46E5] text-white font-semibold px-5 py-2.5 rounded-xl transition-all duration-200 disabled:opacity-50; }
+  .input-field { @apply w-full bg-[#0F1420] border border-[#1F2937] rounded-xl px-4 py-3 text-sm text-white placeholder-[#6B7280] focus:outline-none focus:border-[#6366F1]/60 transition-all; }
+  .badge-success { @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-500/15 text-emerald-400; }
+  .badge-warning { @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-amber-500/15 text-amber-400; }
+  .badge-info { @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[#6366F1]/15 text-[#818CF8]; }
+}
+
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+.animate-fade-up { animation: fadeInUp 0.4s ease-out; }
+
+/* ============================================
+   Date & Time Picker Icons - Make Visible on Dark
+   ============================================ */
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"] {
+  color-scheme: dark;
+  color: #F8FAFC;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator,
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(2);
+  cursor: pointer;
+  opacity: 0.9;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover,
+input[type="time"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+/* Firefox support */
+input[type="date"],
+input[type="time"] {
+  color-scheme: dark;
+}
+
+/* Ensure text inside is visible */
+input[type="date"]::-webkit-datetime-edit,
+input[type="time"]::-webkit-datetime-edit {
+  color: #F8FAFC;
+}
+
+/* Time/Date select elements inside picker */
+input[type="date"]::-webkit-datetime-edit-text,
+input[type="time"]::-webkit-datetime-edit-text,
+input[type="date"]::-webkit-datetime-edit-month-field,
+input[type="date"]::-webkit-datetime-edit-day-field,
+input[type="date"]::-webkit-datetime-edit-year-field,
+input[type="time"]::-webkit-datetime-edit-hour-field,
+input[type="time"]::-webkit-datetime-edit-minute-field {
+  color: #F8FAFC;
+}
+
