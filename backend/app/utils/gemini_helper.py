@@ -66,6 +66,11 @@ async def grade_quiz_answers(quiz: dict, answers: dict) -> dict:
     Quiz: {json.dumps(quiz)}
     User Answers: {json.dumps(answers)}
     
+    CRITICAL RULES:
+    1. If a user's answer is missing from the 'User Answers' dictionary, OR if the answer is an empty string or whitespace, you MUST treat it as UNANSWERED.
+    2. For any UNANSWERED question: Set "userAnswer" to "No answer provided", "score" to 0, and add a feedback saying "You did not attempt this question."
+    3. DO NOT hallucinate or make up an answer for the user if they left it blank.
+    
     Return the response strictly as a JSON object matching this structure exactly:
     {{
         "totalScore": 85,
@@ -80,7 +85,7 @@ async def grade_quiz_answers(quiz: dict, answers: dict) -> dict:
             {{"id": 1, "userAnswer": "A", "correctAnswer": "A", "isCorrect": true, "explanation": "Why it is correct."}}
         ],
         "shortResults": [
-            {{"id": 1, "userAnswer": "User text...", "expectedAnswer": "Expected text...", "score": 3, "maxScore": 5, "feedback": "Feedback...", "missingPoints": ["Point 1"]}}
+            {{"id": 1, "userAnswer": "User text OR No answer provided", "expectedAnswer": "Expected text...", "score": 3, "maxScore": 5, "feedback": "Feedback...", "missingPoints": ["Point 1"]}}
         ]
     }}
     """
