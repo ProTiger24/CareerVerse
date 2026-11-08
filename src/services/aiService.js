@@ -65,7 +65,7 @@ export const startViva = async (subject, chapter = '', topic = '', difficulty = 
   }
 };
 
-export const respondViva = async (subject, conversation, userAnswer, questionNumber) => {
+export const respondViva = async (subject, conversation, userAnswer, questionNumber, difficulty: difficulty, difficulty) => {
   try {
     const response = await fetch(`${AI_BACKEND_URL}/api/ai/viva/respond`, {
       method: 'POST',

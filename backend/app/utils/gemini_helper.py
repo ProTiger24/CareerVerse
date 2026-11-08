@@ -12,7 +12,6 @@ MODEL_NAME = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 client = genai.Client(api_key=API_KEY) if API_KEY else None
 
 async def ask_gemini(query: str, context: str = "general") -> str:
-    """সাধারণ AI চ্যাটের জন্য"""
     if not client:
         return "AI Client is not initialized. Please check GEMINI_API_KEY."
     try:
@@ -28,12 +27,14 @@ async def ask_gemini(query: str, context: str = "general") -> str:
         raise Exception(f"Gemini API Error: {str(e)}")
 
 async def generate_quiz(subject: str, chapter: str, topic: str, num_mcq: int, num_short: int, difficulty: str) -> dict:
-    """কুইজ তৈরি করার জন্য (JSON ফরম্যাটে রিটার্ন করবে)"""
     prompt = f"""
-    Create a quiz for the subject: {subject}, Chapter: {chapter}, Topic: {topic}.
-    Difficulty: {difficulty}.
-    Generate exactly {num_mcq} Multiple Choice Questions (MCQs) and {num_short} Short Questions.
+    You are an expert educator creating a quiz for a student. 
+    Subject: {subject}, Chapter: {chapter}, Topic: {topic}.
+    Difficulty Level: {difficulty}.
     
+    IMPORTANT: Do NOT assume the student is from a Computer Science background unless the subject explicitly says so. Adapt the questions to the specific subject provided.
+    
+    Generate exactly {num_mcq} Multiple Choice Questions (MCQs) and {num_short} Short Questions.
     Return the response strictly as a JSON object with the following structure:
     {{
         "mcqs": [
@@ -56,7 +57,6 @@ async def generate_quiz(subject: str, chapter: str, topic: str, num_mcq: int, nu
         return {"mcqs": [], "short_questions": [], "error": str(e)}
 
 async def grade_quiz_answers(quiz: dict, answers: dict) -> dict:
-    """কুইজের উত্তর মূল্যায়ন করার জন্য"""
     prompt = f"""
     Grade the following quiz based on the user's answers.
     Quiz: {json.dumps(quiz)}
@@ -83,12 +83,14 @@ async def grade_quiz_answers(quiz: dict, answers: dict) -> dict:
         return {"error": str(e)}
 
 async def viva_start(subject: str, chapter: str, topic: str, difficulty: str) -> dict:
-    """ভাইভা পরীক্ষা শুরু করার জন্য প্রথম প্রশ্ন"""
     prompt = f"""
-    Start a viva (oral exam) for the subject: {subject}, Chapter: {chapter}, Topic: {topic}.
-    Difficulty: {difficulty}.
-    Ask the first question. Give a brief greeting.
+    You are an expert university professor conducting a viva/oral exam.
+    Subject: {subject}, Chapter: {chapter}, Topic: {topic}.
+    Difficulty Level: {difficulty}.
     
+    IMPORTANT: This student could be from ANY academic discipline (Arts, Science, Commerce, Medical, Engineering, etc.). Do NOT assume they are a Computer Science student. Ask questions strictly relevant to the provided subject.
+    
+    Ask the first question. Give a brief greeting.
     Return strictly as JSON:
     {{
         "message": "Greeting message",
@@ -107,15 +109,17 @@ async def viva_start(subject: str, chapter: str, topic: str, difficulty: str) ->
         print(f"Error in viva_start: {e}")
         return {"error": str(e)}
 
-async def viva_respond(subject: str, conversation: list, user_answer: str, question_number: int) -> dict:
-    """ভাইভায় ইউজারের উত্তর শুনে পরের প্রশ্ন করা"""
+async def viva_respond(subject: str, conversation: list, user_answer: str, question_number: int, difficulty: str = "medium") -> dict:
     prompt = f"""
+    You are conducting a viva exam.
     Subject: {subject}. 
+    Difficulty Level: {difficulty}. 
     This is question number {question_number}.
     Current conversation history: {json.dumps(conversation)}
     User's answer to the last question: "{user_answer}"
     
-    Briefly evaluate the answer and ask the next question.
+    Briefly evaluate the answer and ask the next question keeping the difficulty level ({difficulty}) in mind. Stay strictly within the domain of {subject}.
+    
     Return strictly as JSON:
     {{
         "feedback": "Feedback on the answer",
@@ -135,7 +139,6 @@ async def viva_respond(subject: str, conversation: list, user_answer: str, quest
         return {"error": str(e)}
 
 async def viva_grade(subject: str, conversation: list) -> dict:
-    """ভাইভার চূড়ান্ত রেজাল্ট"""
     prompt = f"""
     Grade the following viva conversation for the subject: {subject}.
     Conversation: {json.dumps(conversation)}
@@ -161,12 +164,9 @@ async def viva_grade(subject: str, conversation: list) -> dict:
         return {"error": str(e)}
 
 async def generate_report_summary(report_data: str) -> str:
-    """রিপোর্টের ডাটা থেকে AI সামারি তৈরি করার জন্য"""
     prompt = f"""
     Please provide a concise, professional, and encouraging summary based on the following student report data:
-    
     {report_data}
-    
     Return only the summary text.
     """
     try:

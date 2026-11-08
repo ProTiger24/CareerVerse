@@ -126,7 +126,7 @@ const VivaPractice = () => {
       }
     } else {
       // Ask next question
-      const res = await respondViva(config.subject, newConv, userAnswer, questionNumber);
+      const res = await respondViva(config.subject, newConv, userAnswer, questionNumber, config.difficulty);
       setLoading(false);
       if (res.success) {
         const { acknowledgement, question, questionNumber: nextNum } = res.data;
