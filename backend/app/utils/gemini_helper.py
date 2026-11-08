@@ -7,7 +7,10 @@ from google.genai import types
 API_KEY = os.getenv("GEMINI_API_KEY")
 MODEL_NAME = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 
-client = genai.Client(api_key=API_KEY) if API_KEY else None
+client = genai.Client(
+    api_key=API_KEY,
+    http_options=types.HttpOptions(api_version='v1beta')
+) if API_KEY else None
 
 async def ask_gemini(query: str, context: str = "general") -> str:
     if not client:
