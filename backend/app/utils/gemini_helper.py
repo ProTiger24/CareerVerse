@@ -35,6 +35,8 @@ async def generate_quiz(subject: str, chapter: str, topic: str, num_mcq: int, nu
     
     IMPORTANT: Do NOT assume the student is from a Computer Science background unless the subject explicitly says so. Adapt the questions to the specific subject provided.
     
+    LANGUAGE RULE: You must generate the questions and options in the exact language of the provided Subject. (e.g., if the subject is 'Bangla Grammar', write the questions in Bengali).
+    
     Generate exactly {num_mcq} Multiple Choice Questions (MCQs) and {num_short} Short Questions.
     Return the response strictly as a JSON object with the following structure:
     {{
@@ -70,6 +72,7 @@ async def grade_quiz_answers(quiz: dict, answers: dict) -> dict:
     1. If a user's answer is missing from the 'User Answers' dictionary, OR if the answer is an empty string or whitespace, you MUST treat it as UNANSWERED.
     2. For any UNANSWERED question: Set "userAnswer" to "No answer provided", "score" to 0, and add a feedback saying "You did not attempt this question."
     3. DO NOT hallucinate or make up an answer for the user if they left it blank.
+    4. LANGUAGE RULE: Detect the language of the questions/subject. All "explanation", "feedback", "expectedAnswer", and "overallFeedback" MUST be written in the EXACT SAME LANGUAGE as the questions. If it is a Bengali exam, explain in Bengali. If it is an English exam, explain in English.
     
     Return the response strictly as a JSON object matching this structure exactly:
     {{
