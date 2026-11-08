@@ -12,9 +12,11 @@ import {
   CheckCircle2, TrendingUp, TrendingDown, Minus, Calendar, Sparkles, 
   Send, Trophy, Flame, Target, ChevronRight, Zap, GraduationCap, 
   FolderGit2, Settings, Phone, ArrowRight, Quote, ClipboardList, Bot, 
-  Moon, Plus, Star, Activity, Award, User, ExternalLink, Layers, Brain, Mic
+  Moon, Sun, Plus, StickyNote, Star, Activity, Award, User, ExternalLink, Layers, Brain, Mic
 } from 'lucide-react';
 import { AreaChart, Area, ResponsiveContainer } from 'recharts';
+import NotesSection from '../components/NotesSection';
+import SettingsSection from '../components/SettingsSection';
 
 import YouTubeSection from '../components/YouTubeSection';
 import ReportSection from '../components/ReportSection';
@@ -63,6 +65,7 @@ const Sidebar = ({ activeTab, setActiveTab, isOpen, onClose }) => {
   const mainNav = [
     { id: 'home', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'tasks', label: 'Tasks', icon: ClipboardList },
+    { id: 'notes', label: 'My Notes', icon: StickyNote },
     { id: 'study', label: 'Study Planner', icon: BookOpen },
     { id: 'aicoach', label: 'AI Coach', icon: Bot },
     { id: 'codeforces', label: 'Coding', icon: Code2, badge: 'Pro' },
@@ -75,6 +78,9 @@ const Sidebar = ({ activeTab, setActiveTab, isOpen, onClose }) => {
     { id: 'library', label: 'Library', icon: BookOpen },
     { id: 'calendar', label: 'Calendar', icon: Calendar },
     { id: 'motivation', label: 'Motivation', icon: Lightbulb },
+    { id: 'dailyfocus', label: 'Daily Focus', icon: Target },
+    { id: 'weeklyactivity', label: 'Weekly Activity', icon: Activity },
+    { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
   const handleLogout = async () => {
@@ -91,7 +97,7 @@ const Sidebar = ({ activeTab, setActiveTab, isOpen, onClose }) => {
         )}
       </AnimatePresence>
 
-      <aside className={`w-[240px] h-screen bg-[#0F1420] border-r border-[#1F2937] flex flex-col fixed left-0 top-0 z-50 transition-transform duration-300 ${
+      <aside className={`premium-sidebar w-[240px] h-screen flex flex-col fixed left-0 top-0 z-50 transition-transform duration-300 ${
         isOpen ? 'translate-x-0' : '-translate-x-full'
       } md:translate-x-0`}>
         
@@ -118,10 +124,10 @@ const Sidebar = ({ activeTab, setActiveTab, isOpen, onClose }) => {
             const isActive = activeTab === item.id;
             return (
               <button key={item.id} onClick={() => { setActiveTab(item.id); onClose?.(); }}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-sm font-medium ${
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 text-sm font-medium ${
                   isActive
-                    ? 'bg-[#6366F1]/15 text-[#A5B4FC] border border-[#6366F1]/30'
-                    : 'text-[#9CA3AF] hover:text-white hover:bg-white/[0.03] border border-transparent'
+                    ? 'bg-gradient-to-r from-[#6366F1]/20 to-[#8B5CF6]/10 text-white border border-[#6366F1]/30 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)]'
+                    : 'text-[#9CA3AF] hover:text-white hover:bg-white/[0.04] border border-transparent'
                 }`}>
                 <Icon className="w-[18px] h-[18px]" strokeWidth={2} />
                 <span className="flex-1 text-left">{item.label}</span>
@@ -137,10 +143,7 @@ const Sidebar = ({ activeTab, setActiveTab, isOpen, onClose }) => {
 
         {/* Bottom */}
         <div className="p-3 border-t border-[#1F2937]">
-          <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[#9CA3AF] hover:text-white hover:bg-white/[0.03] transition-all text-sm font-medium mb-1">
-            <Settings className="w-[18px] h-[18px]" strokeWidth={2} />
-            <span>Settings</span>
-          </button>
+
           <div className="flex items-center gap-2.5 px-2 py-2 mb-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] flex items-center justify-center text-white text-xs font-bold">
               {user?.email?.charAt(0).toUpperCase() || 'U'}
@@ -164,16 +167,18 @@ const Sidebar = ({ activeTab, setActiveTab, isOpen, onClose }) => {
 };
 
 // ============ HEADER ============
-const Header = ({ onMenuClick, activeTab }) => {
+const Header = ({ onMenuClick, activeTab, isDarkMode, setIsDarkMode, activities }) => {
+  const [showNotif, setShowNotif] = useState(false);
   const { user } = useAuth();
   const pageTitles = {
-    home: 'Dashboard', tasks: 'Tasks', study: 'Study Planner', aicoach: 'AI Coach',
+    home: 'Dashboard', tasks: 'Tasks', notes: 'My Notes', settings: 'Settings', study: 'Study Planner', aicoach: 'AI Coach',
     codeforces: 'Coding', analytics: 'Progress', videos: 'Videos',
-    reports: 'Reports', motivation: 'Motivation', testhistory: 'Test History'
+    reports: 'Reports', motivation: 'Motivation', testhistory: 'Test History',
+    dailyfocus: 'Daily Focus', weeklyactivity: 'Weekly Activity'
   };
 
   return (
-    <header className="sticky top-0 z-30 bg-[#0A0E1A]/80 backdrop-blur-xl border-b border-[#1F2937]">
+    <header className="premium-header sticky top-0 z-30">
       <div className="flex items-center justify-between gap-4 px-4 md:px-6 py-3.5">
         <div className="flex items-center gap-3 min-w-0 flex-1">
           <button onClick={onMenuClick} className="md:hidden text-[#9CA3AF] hover:text-white flex-shrink-0">
@@ -190,13 +195,28 @@ const Header = ({ onMenuClick, activeTab }) => {
         </div>
 
         <div className="flex items-center gap-2 flex-shrink-0">
-          <button className="w-9 h-9 rounded-xl bg-[#161B2E] border border-[#1F2937] flex items-center justify-center text-[#9CA3AF] hover:text-white transition-all">
-            <Moon className="w-4 h-4" />
+          {/* Theme Toggle Button */}
+          <button onClick={() => setIsDarkMode(!isDarkMode)} className="w-9 h-9 rounded-xl bg-[#161B2E] border border-[#1F2937] flex items-center justify-center text-[#9CA3AF] hover:text-white transition-all">
+            {isDarkMode ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
           </button>
-          <button className="relative w-9 h-9 rounded-xl bg-[#161B2E] border border-[#1F2937] flex items-center justify-center text-[#9CA3AF] hover:text-white transition-all">
-            <Bell className="w-4 h-4" />
-            <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-red-500 rounded-full"></span>
-          </button>
+          
+          {/* Notification Bell with Dropdown */}
+          <div className="relative">
+            <button onClick={() => setShowNotif(!showNotif)} className="relative w-9 h-9 rounded-xl bg-[#161B2E] border border-[#1F2937] flex items-center justify-center text-[#9CA3AF] hover:text-white transition-all">
+              <Bell className="w-4 h-4" />
+              {activities && activities.length > 0 && <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-red-500 rounded-full"></span>}
+            </button>
+            {showNotif && (
+              <div className="absolute right-0 mt-2 w-64 bg-[#161B2E] border border-[#1F2937] rounded-xl shadow-lg z-50 p-3">
+                <h3 className="text-sm font-semibold text-white mb-2">Notifications</h3>
+                <div className="max-h-60 overflow-y-auto">
+                  {activities && activities.length > 0 ? activities.map(a => (
+                    <div key={a.id} className="text-xs text-gray-300 p-2 border-b border-[#1F2937] last:border-0 truncate">{a.text}</div>
+                  )) : <p className="text-xs text-gray-500">No new notifications</p>}
+                </div>
+              </div>
+            )}
+          </div>
           <div className="hidden sm:flex items-center gap-2 pl-2 border-l border-[#1F2937] ml-1">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] flex items-center justify-center text-white text-sm font-bold">
               {user?.email?.charAt(0).toUpperCase() || 'U'}
@@ -228,7 +248,15 @@ const KPICard = ({ icon: Icon, label, value, change, trend, accent = 'indigo', s
   const data = (sparkData && sparkData.length > 0) ? sparkData : [{ v: 0 }, { v: 0 }, { v: 0 }, { v: 0 }, { v: 0 }, { v: 0 }, { v: 0 }];
 
   return (
-    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="card card-hover relative overflow-hidden">
+    <motion.div 
+      initial={{ opacity: 0, y: 12 }} 
+      animate={{ opacity: 1, y: 0 }} 
+      className={`premium-card card-hover relative overflow-hidden ${
+        accent === 'pink' 
+          ? '!bg-gradient-to-br !from-[#2D1B36] !to-[#161B2E] !border-[#EC4899]/40 shadow-lg shadow-[#EC4899]/10' 
+          : ''
+      }`}
+    >
       <div className="p-5 pb-16">
         <div className={`w-10 h-10 rounded-xl ${c.bg} flex items-center justify-center mb-4`}>
           <Icon className={`w-5 h-5 ${c.text}`} strokeWidth={2.2} />
@@ -265,6 +293,16 @@ const Dashboard = () => {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('home');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(true);
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.remove('light-mode');
+    } else {
+      document.documentElement.classList.add('light-mode');
+    }
+  }, [isDarkMode]);
+
   const [chatMessage, setChatMessage] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
   const [isThinking, setIsThinking] = useState(false);
@@ -315,7 +353,7 @@ const Dashboard = () => {
         })));
       }),
       // Sessions
-      onValue(ref(realtimeDb, `users/${userId}/codingSessions`), (s) => {
+      onValue(ref(realtimeDb, `users/${userId}/studySessions`), (s) => {
         const d = s.val();
         setSessions(d ? Object.keys(d).map(k => ({ id: k, ...d[k] })) : []);
       }),
@@ -337,28 +375,53 @@ const Dashboard = () => {
   }, [userId]);
 
   // Derived values
-  const todayStr = new Date().toISOString().split('T')[0];
+  const todayStr = new Date().toLocaleDateString('en-CA');
   const todayTasks = tasks.filter(t => (t.taskDate || t.createdAt?.split('T')[0]) === todayStr);
   const completedToday = todayTasks.filter(t => t.completed).length;
   const totalXP = tasks.length * 10 + tasks.filter(t => t.completed).length * 5;
 
   // Streak from sessions
   const streak = (() => {
-    if (!sessions.length) return 0;
-    const uniqueDays = [...new Set(sessions.map(s => s.date))].sort().reverse();
-    let s = 0;
-    let d = new Date();
-    d.setHours(0, 0, 0, 0);
-    for (const day of uniqueDays) {
-      if (day === d.toISOString().split('T')[0]) { s++; d.setDate(d.getDate() - 1); }
-      else break;
-    }
-    return s;
-  })();
+      const allDates = [
+        ...sessions.map(s => s.date),
+        ...tasks.filter(t => t.lastStudied).map(t => new Date(t.lastStudied).toLocaleDateString('en-CA'))
+      ].filter(Boolean);
+      
+      if (!allDates.length) return 0;
+      const uniqueDays = [...new Set(allDates)].sort().reverse();
+      
+      let s = 0;
+      let d = new Date();
+      d.setHours(0, 0, 0, 0);
 
-  const todayMinutes = Math.round(sessions.filter(s => s.date === todayStr).reduce((sum, s) => sum + (s.duration || 0), 0) / 60);
+      for (const day of uniqueDays) {
+        if (day === d.toLocaleDateString('en-CA')) { 
+          s++; 
+          d.setDate(d.getDate() - 1); 
+        } else {
+          if (s === 0) {
+            const yesterday = new Date(d);
+            yesterday.setDate(yesterday.getDate() - 1);
+            if (day === yesterday.toLocaleDateString('en-CA')) {
+               s++;
+               d.setDate(d.getDate() - 2);
+               continue;
+            }
+          }
+          break;
+        }
+      }
+      return s;
+    })();
+
+  const todayTasksTime = tasks.filter(t => 
+      (t.lastStudied && new Date(t.lastStudied).toLocaleDateString('en-CA') === todayStr) || 
+      (t.taskDate === todayStr)
+    ).reduce((sum, t) => sum + (t.totalTime || 0), 0);
+    const todaySessionsTime = sessions.filter(s => s.date === todayStr).reduce((sum, s) => sum + (s.duration || 0), 0);
+    const todayMinutes = Math.round(Math.max(todayTasksTime, todaySessionsTime) / 60);
   const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);
-  const weekMinutes = Math.round(sessions.filter(s => s.date >= weekAgo.toISOString().split('T')[0]).reduce((sum, s) => sum + (s.duration || 0), 0) / 60);
+  const weekMinutes = Math.round(sessions.filter(s => s.date >= weekAgo.toLocaleDateString('en-CA')).reduce((sum, s) => sum + (s.duration || 0), 0) / 60);
 
   // Application stats
   const appStats = {
@@ -457,13 +520,13 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#0A0E1A] text-[#F9FAFB]">
+    <div className={`min-h-screen transition-colors duration-300 ${isDarkMode ? 'bg-[#0A0E1A] text-[#F9FAFB]' : 'bg-gray-100 text-gray-900'}`}>
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
       <div className="md:ml-[240px] pb-20 md:pb-6">
-        <Header onMenuClick={() => setIsSidebarOpen(true)} activeTab={activeTab} />
+        <Header onMenuClick={() => setIsSidebarOpen(true)} activeTab={activeTab} isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} activities={activities} />
 
-        <main className="p-4 md:p-6 space-y-6 max-w-[1400px] mx-auto">
+        <main className="p-4 md:p-6 space-y-6 w-full max-w-[1700px] mx-auto">
           
           {/* ============ HOME ============ */}
           {activeTab === 'home' && (
@@ -472,7 +535,7 @@ const Dashboard = () => {
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
                 <div>
                   <h1 className="text-2xl md:text-3xl font-bold text-white">
-                    Good Evening, {user?.displayName || user?.email?.split('@')[0] || 'Student'} 👋
+                    Good Evening, {user?.displayName || user?.email?.split('@')[0] || 'Abdul Alim'} 👋
                   </h1>
                   <p className="text-sm text-[#9CA3AF] mt-1">Your hard work today builds your better tomorrow.</p>
                 </div>
@@ -505,7 +568,7 @@ const Dashboard = () => {
                         const arr = [];
                         for (let i = 6; i >= 0; i--) {
                           const d = new Date(); d.setDate(d.getDate() - i);
-                          const ds = d.toISOString().split('T')[0];
+                          const ds = d.toLocaleDateString('en-CA');
                           arr.push({ v: tasks.filter(t => (t.taskDate || t.createdAt?.split('T')[0]) === ds && t.completed).length });
                         }
                         return arr;
@@ -522,8 +585,10 @@ const Dashboard = () => {
                         const arr = [];
                         for (let i = 6; i >= 0; i--) {
                           const d = new Date(); d.setDate(d.getDate() - i);
-                          const ds = d.toISOString().split('T')[0];
-                          arr.push({ v: Math.round(sessions.filter(s => s.date === ds).reduce((sum, s) => sum + (s.duration || 0), 0) / 60) });
+                          const ds = d.toLocaleDateString('en-CA');
+                          const daySess = sessions.filter(s => s.date === ds).reduce((sum, s) => sum + (s.duration || 0), 0);
+                          const dayTask = tasks.filter(t => t.lastStudied && new Date(t.lastStudied).toLocaleDateString('en-CA') === ds).reduce((sum, t) => sum + (t.totalTime || 0), 0);
+                          arr.push({ v: Math.round(Math.max(daySess, dayTask) / 60) });
                         }
                         return arr;
                       })()}
@@ -539,8 +604,10 @@ const Dashboard = () => {
                         const arr = [];
                         for (let i = 6; i >= 0; i--) {
                           const d = new Date(); d.setDate(d.getDate() - i);
-                          const ds = d.toISOString().split('T')[0];
-                          arr.push({ v: sessions.some(s => s.date === ds) ? 1 : 0 });
+                          const ds = d.toLocaleDateString('en-CA');
+                          const hasSess = sessions.some(s => s.date === ds);
+                          const hasTask = tasks.some(t => t.lastStudied && new Date(t.lastStudied).toLocaleDateString('en-CA') === ds);
+                          arr.push({ v: (hasSess || hasTask) ? 1 : 0 });
                         }
                         return arr;
                       })()}
@@ -556,7 +623,7 @@ const Dashboard = () => {
                         const arr = []; let cum = 0;
                         for (let i = 6; i >= 0; i--) {
                           const d = new Date(); d.setDate(d.getDate() - i);
-                          const ds = d.toISOString().split('T')[0];
+                          const ds = d.toLocaleDateString('en-CA');
                           const dayT = tasks.filter(t => (t.taskDate || t.createdAt?.split('T')[0]) === ds);
                           cum += dayT.length * 10 + dayT.filter(t => t.completed).length * 5;
                           arr.push({ v: cum });
@@ -569,7 +636,7 @@ const Dashboard = () => {
                   {/* Application Progress + Upcoming Tasks */}
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     {/* Application Progress */}
-                    <div className="card p-5">
+                    <div className="premium-card p-5">
                       <div className="flex items-center justify-between mb-4">
                         <div>
                           <h3 className="text-base font-semibold text-white">Application Progress</h3>
@@ -591,7 +658,7 @@ const Dashboard = () => {
                         <div className="flex items-center gap-6">
                           <div className="w-28 h-28 flex-shrink-0">
                             <CircularProgressbar value={100} text={`${applications.length}`}
-                              styles={buildStyles({ textColor: '#fff', pathColor: '#6366F1', trailColor: '#1F2937', textSize: '24px' })} />
+                              styles={buildStyles({ textColor: isDarkMode ? '#fff' : '#111827', pathColor: '#6366F1', trailColor: isDarkMode ? '#1F2937' : '#e5e7eb', textSize: '24px' })} />
                             <p className="text-[10px] text-center text-[#6B7280] mt-1">Total Applied</p>
                           </div>
                           <div className="flex-1 space-y-2.5">
@@ -618,7 +685,7 @@ const Dashboard = () => {
                     </div>
 
                     {/* Upcoming Tasks */}
-                    <div className="card p-5">
+                    <div className="premium-card p-5">
                       <div className="flex items-center justify-between mb-4">
                         <h3 className="text-base font-semibold text-white">Upcoming Tasks</h3>
                         <button onClick={() => setActiveTab('tasks')} className="text-xs text-[#818CF8] hover:text-[#A5B4FC] font-medium flex items-center gap-1">
@@ -656,7 +723,7 @@ const Dashboard = () => {
 
                   {/* Learning Progress + Recent Activity */}
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    <div className="card p-5">
+                    <div className="premium-card p-5">
                       <div className="flex items-center justify-between mb-4">
                         <h3 className="text-base font-semibold text-white">Learning Progress</h3>
                         <button onClick={() => setActiveTab('study')} className="text-xs text-[#818CF8] hover:text-[#A5B4FC] font-medium flex items-center gap-1">
@@ -675,7 +742,7 @@ const Dashboard = () => {
                         <div className="flex items-center gap-5">
                           <div className="w-24 h-24 flex-shrink-0">
                             <CircularProgressbar value={overallProgress} text={`${doneChapters}/${totalChapters}`}
-                              styles={buildStyles({ textColor: '#fff', pathColor: '#6366F1', trailColor: '#1F2937', textSize: '22px' })} />
+                              styles={buildStyles({ textColor: isDarkMode ? '#fff' : '#111827', pathColor: '#6366F1', trailColor: isDarkMode ? '#1F2937' : '#e5e7eb', textSize: '22px' })} />
                             <p className="text-[10px] text-center text-[#6B7280] mt-1">Chapters Done</p>
                           </div>
                           <div className="flex-1 space-y-3">
@@ -696,7 +763,7 @@ const Dashboard = () => {
                       )}
                     </div>
 
-                    <div className="card p-5">
+                    <div className="premium-card p-5">
                       <div className="flex items-center justify-between mb-4">
                         <h3 className="text-base font-semibold text-white">Recent Activity</h3>
                       </div>
@@ -720,7 +787,7 @@ const Dashboard = () => {
 
                 {/* RIGHT: AI Coach + Quick Links + Motivation (3 cols) */}
                 <div className="xl:col-span-3 space-y-4">
-                  <div className="card p-5">
+                  <div className="premium-card p-5">
                     <div className="flex items-center gap-2 mb-1">
                       <Sparkles className="w-4 h-4 text-[#818CF8]" />
                       <h3 className="text-sm font-semibold text-white">AI Coach</h3>
@@ -765,7 +832,7 @@ const Dashboard = () => {
                     </div>
                   </div>
 
-                  <div className="card p-5">
+                  <div className="premium-card p-5">
                     <h3 className="text-sm font-semibold text-white mb-3">Quick Links</h3>
                     <div className="grid grid-cols-2 gap-2">
                       {quickLinks.map((q, i) => (
@@ -778,7 +845,7 @@ const Dashboard = () => {
                     </div>
                   </div>
 
-                  <div className="card p-5 bg-gradient-to-br from-[#161B2E] to-[#1F1438] relative overflow-hidden">
+                  <div className="premium-card p-5 bg-gradient-to-br from-[#161B2E] to-[#1F1438] relative overflow-hidden">
                     <Quote className="w-8 h-8 text-[#6366F1]/20 absolute top-3 right-3" />
                     <div className="relative z-10">
                       <p className="text-sm text-white/90 italic leading-relaxed">
@@ -788,11 +855,13 @@ const Dashboard = () => {
                     </div>
                     <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-[#6366F1]/10 rounded-full blur-2xl"></div>
                   </div>
+
+
                 </div>
               </div>
 
               {/* Bottom Banner */}
-              <div className="card p-5 bg-gradient-to-r from-[#6366F1]/15 to-[#8B5CF6]/15 border-[#6366F1]/30 flex flex-col md:flex-row items-center justify-between gap-3">
+              <div className="premium-card p-5 bg-gradient-to-r from-[#6366F1]/15 to-[#8B5CF6]/15 border-[#6366F1]/30 flex flex-col md:flex-row items-center justify-between gap-3">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] flex items-center justify-center">
                     <Rocket className="w-6 h-6 text-white" />
@@ -812,11 +881,13 @@ const Dashboard = () => {
 
           {/* ============ OTHER TABS ============ */}
           {activeTab === 'tasks' && <TaskSection />}
+          {activeTab === 'notes' && <NotesSection />}
+          {activeTab === 'settings' && <SettingsSection isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />}
           {activeTab === 'study' && <StudyPlanner />}
           {activeTab === 'codeforces' && <CodingHub />}
 
           {activeTab === 'aicoach' && (
-            <div className="card flex flex-col" style={{ height: 'calc(100vh - 140px)' }}>
+            <div className="premium-card flex flex-col" style={{ height: 'calc(100vh - 140px)' }}>
               <div className="p-5 border-b border-[#1F2937] flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] flex items-center justify-center">
@@ -886,6 +957,450 @@ const Dashboard = () => {
           {activeTab === 'calendar' && <CalendarIntegration />}
           {activeTab === 'motivation' && <Motivation />}
 
+          {activeTab === 'dailyfocus' && (
+            <div className="w-full space-y-7 animate-fade-up pb-10">
+
+              {/* Header */}
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-9 h-9 rounded-xl bg-blue-500/10 flex items-center justify-center">
+                      <Target className="w-5 h-5 text-blue-400" />
+                    </div>
+                    <span className="text-xs font-bold tracking-[0.18em] uppercase text-blue-400">
+                      Productivity Center
+                    </span>
+                  </div>
+
+                  <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                    {new Date().getHours() < 12
+                      ? 'Good Morning'
+                      : new Date().getHours() < 17
+                      ? 'Good Afternoon'
+                      : 'Good Evening'}
+                    , {user?.displayName || user?.email?.split('@')[0] || 'Student'}!
+                  </h2>
+
+                  <p className="text-sm text-[#94A3B8] mt-2">
+                    Stay focused, make progress, and build your future.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-3 self-start sm:self-auto">
+                  <div className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-[#151D30] border border-white/[0.06]">
+                    <div className="w-9 h-9 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400">
+                      <span className="text-lg">◷</span>
+                    </div>
+                    <div>
+                      <p className="text-[10px] uppercase tracking-wider text-[#64748B] font-semibold">
+                        Today's Date
+                      </p>
+                      <p className="text-sm font-semibold text-white">
+                        {new Date().toLocaleDateString('en-GB', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric'
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Main Statistics */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+                {/* Focus Time */}
+                <div className="relative overflow-hidden rounded-2xl p-6 bg-gradient-to-br from-[#1C2D50] via-[#17243F] to-[#151D30] border border-blue-400/15 shadow-lg shadow-blue-950/20">
+                  <div className="absolute -right-12 -top-12 w-40 h-40 rounded-full bg-blue-500/10 blur-3xl pointer-events-none" />
+
+                  <div className="relative">
+                    <div className="flex items-center justify-between mb-7">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-blue-400/15 flex items-center justify-center">
+                          <Target className="w-5 h-5 text-blue-400" />
+                        </div>
+                        <div>
+                          <h3 className="text-sm font-semibold text-white">Focus Time</h3>
+                          <p className="text-xs text-blue-200/60 mt-0.5">Daily study activity</p>
+                        </div>
+                      </div>
+                      <span className="text-[10px] font-bold text-blue-300 bg-blue-400/10 border border-blue-400/10 px-2.5 py-1.5 rounded-lg">
+                        TODAY
+                      </span>
+                    </div>
+
+                    <div className="mb-2">
+                      <span className="text-4xl font-bold text-white tracking-tight">
+                        {formatMinutes(todayMinutes)}
+                      </span>
+                    </div>
+
+                    <p className="text-xs text-blue-200/60 mb-6">
+                      Total time invested in learning today
+                    </p>
+
+                    <button
+                      onClick={() => setActiveTab('tasks')}
+                      className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20 active:scale-[0.98]"
+                    >
+                      <span>Start Your Next Task</span>
+                      <span>→</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Task Completion */}
+                <div className="rounded-2xl p-6 bg-[#151D30] border border-white/[0.06] hover:border-emerald-500/20 transition-all duration-300">
+                  <div className="flex items-center justify-between mb-7">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
+                        <span className="text-xl text-emerald-400">✓</span>
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-semibold text-white">Task Completion</h3>
+                        <p className="text-xs text-[#64748B] mt-0.5">Today's achievements</p>
+                      </div>
+                    </div>
+                    <span className="text-xs text-[#64748B] font-medium">{completedToday} / {todayTasks.length || 0}</span>
+                  </div>
+
+                  <div className="flex items-end gap-2 mb-2">
+                    <span className="text-4xl font-bold text-white tracking-tight">
+                      {todayTasks.length
+                        ? Math.round((completedToday / todayTasks.length) * 100)
+                        : 0}%
+                    </span>
+                    <span className="text-xs text-emerald-400 font-semibold mb-2">
+                      Completed
+                    </span>
+                  </div>
+
+                  <p className="text-xs text-[#94A3B8] mb-6">
+                    {completedToday} of {todayTasks.length || 0} tasks completed today
+                  </p>
+
+                  <div className="h-2.5 w-full bg-[#252F43] rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all duration-1000"
+                      style={{
+                        width: `${todayTasks.length
+                          ? Math.min((completedToday / todayTasks.length) * 100, 100)
+                          : 0}%`
+                      }}
+                    />
+                  </div>
+
+                  <div className="flex justify-between mt-3 text-[11px] text-[#64748B]">
+                    <span>Daily progress</span>
+                    <span>{completedToday}/{todayTasks.length || 0}</span>
+                  </div>
+                </div>
+
+                {/* Study Goal */}
+                <div className="rounded-2xl p-6 bg-[#151D30] border border-white/[0.06] hover:border-violet-500/20 transition-all duration-300">
+                  <div className="flex items-center justify-between mb-7">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-violet-500/10 flex items-center justify-center">
+                        <span className="text-xl text-violet-400">◷</span>
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-semibold text-white">Study Goal</h3>
+                        <p className="text-xs text-[#64748B] mt-0.5">Daily learning target</p>
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-semibold px-2.5 py-1.5 rounded-lg bg-violet-500/10 text-violet-300">
+                      2 HOURS
+                    </span>
+                  </div>
+
+                  <div className="flex items-end gap-2 mb-2">
+                    <span className="text-4xl font-bold text-white tracking-tight">
+                      {Math.min(Math.round((todayMinutes / 120) * 100), 100)}%
+                    </span>
+                    <span className="text-xs text-violet-400 font-semibold mb-2">
+                      Achieved
+                    </span>
+                  </div>
+
+                  <p className="text-xs text-[#94A3B8] mb-6">
+                    {formatMinutes(todayMinutes)} studied out of 2 hours
+                  </p>
+
+                  <div className="h-2.5 w-full bg-[#252F43] rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-gradient-to-r from-violet-600 to-indigo-400 transition-all duration-1000"
+                      style={{
+                        width: `${Math.min((todayMinutes / 120) * 100, 100)}%`
+                      }}
+                    />
+                  </div>
+
+                  <div className="flex justify-between mt-3 text-[11px] text-[#64748B]">
+                    <span>0 min</span>
+                    <span>120 min</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom Section */}
+              <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
+
+                {/* Daily Summary */}
+                <div className="lg:col-span-3 rounded-2xl p-6 bg-[#151D30] border border-white/[0.06]">
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h3 className="text-base font-bold text-white">Daily Summary</h3>
+                      <p className="text-xs text-[#64748B] mt-1">
+                        Your productivity at a glance
+                      </p>
+                    </div>
+                    <div className="w-9 h-9 rounded-xl bg-blue-500/10 flex items-center justify-center">
+                      <span className="text-blue-400 text-lg">▤</span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="rounded-xl bg-[#1C263A] p-4 border border-white/[0.03]">
+                      <p className="text-xs text-[#94A3B8] mb-2">Completed Tasks</p>
+                      <p className="text-2xl font-bold text-white">
+                        {completedToday}
+                        <span className="text-sm font-medium text-[#64748B]">
+                          {' '}/ {todayTasks.length || 0}
+                        </span>
+                      </p>
+                    </div>
+
+                    <div className="rounded-xl bg-[#1C263A] p-4 border border-white/[0.03]">
+                      <p className="text-xs text-[#94A3B8] mb-2">Study Duration</p>
+                      <p className="text-2xl font-bold text-white">
+                        {formatMinutes(todayMinutes)}
+                      </p>
+                    </div>
+
+                    <div className="rounded-xl bg-[#1C263A] p-4 border border-white/[0.03]">
+                      <p className="text-xs text-[#94A3B8] mb-2">Remaining Study Time</p>
+                      <p className="text-2xl font-bold text-violet-300">
+                        {formatMinutes(Math.max(0, 120 - todayMinutes))}
+                      </p>
+                    </div>
+
+                    <div className="rounded-xl bg-[#1C263A] p-4 border border-white/[0.03]">
+                      <p className="text-xs text-[#94A3B8] mb-2">Goal Status</p>
+                      <p className={`text-lg font-bold ${
+                        todayMinutes >= 120
+                          ? 'text-emerald-400'
+                          : 'text-amber-400'
+                      }`}>
+                        {todayMinutes >= 120 ? 'Goal Achieved' : 'In Progress'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Daily Motivation */}
+                <div className="lg:col-span-2 relative overflow-hidden rounded-2xl p-6 bg-gradient-to-br from-[#29204A] via-[#201B3C] to-[#151D30] border border-violet-500/15 flex flex-col justify-between">
+                  <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-violet-500/10 blur-3xl rounded-full pointer-events-none" />
+
+                  <div className="relative">
+                    <div className="w-11 h-11 rounded-xl bg-violet-400/15 flex items-center justify-center mb-5">
+                      <span className="text-2xl">✦</span>
+                    </div>
+
+                    <span className="text-[10px] font-bold tracking-[0.18em] uppercase text-violet-300">
+                      Daily Reminder
+                    </span>
+
+                    <h3 className="text-xl font-bold text-white mt-3 leading-snug">
+                      Every focused minute moves you closer to your goals.
+                    </h3>
+
+                    <p className="text-sm text-[#A5A0C5] mt-3 leading-relaxed">
+                      Consistency matters more than perfection. Keep learning,
+                      stay disciplined, and make today productive.
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={() => setActiveTab('tasks')}
+                    className="relative mt-7 w-full sm:w-auto self-start flex items-center gap-2 text-sm font-semibold text-violet-300 hover:text-white transition-colors"
+                  >
+                    Continue Learning <span>→</span>
+                  </button>
+                </div>
+
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'weeklyactivity' && (() => {
+            // ক্যালকুলেশন
+            const daysData = [];
+            for (let i = 6; i >= 0; i--) {
+              const d = new Date(); d.setDate(d.getDate() - i);
+              const ds = d.toLocaleDateString('en-CA');
+              const daySess = sessions.filter(s => s.date === ds).reduce((sum, s) => sum + (s.duration || 0), 0);
+              const dayTask = tasks.filter(t => t.lastStudied && new Date(t.lastStudied).toLocaleDateString('en-CA') === ds).reduce((sum, t) => sum + (t.totalTime || 0), 0);
+              const totalSeconds = Math.max(daySess, dayTask);
+              daysData.push({ 
+                dateObj: d, 
+                dayName: d.toLocaleDateString('en-US', { weekday: 'short' }),
+                fullDate: d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }),
+                minutes: Math.round(totalSeconds / 60) 
+              });
+            }
+            const maxVal = Math.max(...daysData.map(d => d.minutes), 30); // মিনিমাম ৩০ মিনিটের স্কেল
+            const totalWeeklyMinutes = daysData.reduce((sum, d) => sum + d.minutes, 0);
+            const avgMinutes = Math.round(totalWeeklyMinutes / 7);
+            const bestDay = daysData.reduce((prev, current) => (prev.minutes > current.minutes) ? prev : current, daysData[0]);
+
+            return (
+              <div className="w-full space-y-7 animate-fade-up pb-10">
+
+                {/* Header */}
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-9 h-9 rounded-xl bg-indigo-500/10 flex items-center justify-center">
+                        <Activity className="w-5 h-5 text-indigo-400" />
+                      </div>
+                      <span className="text-xs font-bold tracking-[0.18em] uppercase text-indigo-400">
+                        Analytics Center
+                      </span>
+                    </div>
+                    <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                      Weekly Activity
+                    </h2>
+                    <p className="text-sm text-[#94A3B8] mt-2">
+                      Your study consistency over the last 7 days.
+                    </p>
+                  </div>
+                  
+                  <div className="flex items-center gap-3 self-start sm:self-auto">
+                    <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#151D30] border border-white/[0.06] text-sm text-white font-medium">
+                      <Calendar className="w-4 h-4 text-[#64748B]" />
+                      Last 7 Days
+                    </div>
+                  </div>
+                </div>
+
+                {/* Summary Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                  {/* Total Time */}
+                  <div className="rounded-2xl p-6 bg-[#151D30] border border-white/[0.06]">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-sm font-semibold text-[#94A3B8]">Total Study Time</h3>
+                      <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                        <Clock className="w-4 h-4 text-blue-400" />
+                      </div>
+                    </div>
+                    <div className="text-3xl font-bold text-white mb-1">
+                      {formatMinutes(totalWeeklyMinutes)}
+                    </div>
+                    <p className="text-xs text-[#64748B]">Invested in learning this week</p>
+                  </div>
+
+                  {/* Average Time */}
+                  <div className="rounded-2xl p-6 bg-[#151D30] border border-white/[0.06]">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-sm font-semibold text-[#94A3B8]">Daily Average</h3>
+                      <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                        <TrendingUp className="w-4 h-4 text-emerald-400" />
+                      </div>
+                    </div>
+                    <div className="text-3xl font-bold text-white mb-1">
+                      {formatMinutes(avgMinutes)}
+                    </div>
+                    <p className="text-xs text-[#64748B]">Average time per day</p>
+                  </div>
+
+                  {/* Best Day */}
+                  <div className="rounded-2xl p-6 bg-[#151D30] border border-white/[0.06]">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-sm font-semibold text-[#94A3B8]">Best Study Day</h3>
+                      <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
+                        <Star className="w-4 h-4 text-amber-400" />
+                      </div>
+                    </div>
+                    <div className="text-3xl font-bold text-white mb-1">
+                      {bestDay.minutes > 0 ? bestDay.dayName : 'N/A'}
+                    </div>
+                    <p className="text-xs text-[#64748B]">{bestDay.minutes > 0 ? `${formatMinutes(bestDay.minutes)} studied` : 'No study data yet'}</p>
+                  </div>
+                </div>
+
+                {/* Main Chart Area */}
+                <div className="rounded-2xl p-6 md:p-8 bg-[#151D30] border border-white/[0.06]">
+                  <div className="flex items-center justify-between mb-8">
+                    <div>
+                      <h3 className="text-base font-bold text-white">Study Duration Graph</h3>
+                      <p className="text-xs text-[#64748B] mt-1">Daily breakdown of your study hours</p>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-[#94A3B8]">
+                      <span className="w-3 h-3 rounded bg-gradient-to-t from-indigo-600 to-blue-400"></span> Study Time
+                    </div>
+                  </div>
+
+                  <div className="relative h-72 w-full flex items-end justify-between gap-2 md:gap-6 border-b border-[#252F43] pb-2">
+                    {/* Y-Axis Grid Lines */}
+                    <div className="absolute inset-0 flex flex-col justify-between pointer-events-none pb-2">
+                      {[100, 75, 50, 25, 0].map((val, idx) => (
+                        <div key={val} className="w-full border-t border-[#252F43]/50 flex items-start relative">
+                           <span className="absolute -top-2.5 left-0 text-[10px] text-[#64748B] bg-[#151D30] pr-2 z-10 font-medium">
+                             {formatMinutes(Math.round((val / 100) * maxVal))}
+                           </span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Bars */}
+                    <div className="w-full h-full flex items-end justify-between gap-2 md:gap-4 pl-8">
+                      {daysData.map((data, i) => {
+                        const heightPercent = (data.minutes / maxVal) * 100;
+                        const isToday = data.fullDate === new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+                        
+                        return (
+                          <div key={i} className="flex flex-col items-center flex-1 group relative h-full justify-end z-10">
+                            {/* Tooltip */}
+                            <div className="absolute -top-12 bg-[#1C263A] text-white text-xs px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap z-20 pointer-events-none font-semibold border border-[#374151] shadow-xl transform group-hover:-translate-y-1">
+                              {data.fullDate} <br/>
+                              <span className="text-[#818CF8]">{formatMinutes(data.minutes)}</span>
+                              <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#1C263A] rotate-45 border-b border-r border-[#374151]"></div>
+                            </div>
+                            
+                            {/* Bar Container */}
+                            <div className="w-full max-w-[48px] h-full flex items-end bg-[#0A0E1A]/40 rounded-t-lg relative overflow-hidden group-hover:bg-[#0A0E1A]/80 transition-colors">
+                               {/* Actual Bar */}
+                               <div 
+                                 className={`w-full rounded-t-lg transition-all duration-1000 ease-out ${
+                                   isToday 
+                                     ? 'bg-gradient-to-t from-[#6366F1] to-[#A5B4FC] opacity-100' 
+                                     : 'bg-gradient-to-t from-indigo-600 to-blue-400 opacity-60 group-hover:opacity-100'
+                                 }`}
+                                 style={{ height: `${Math.max(heightPercent, 2)}%` }}
+                               ></div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  
+                  {/* X-Axis Labels */}
+                  <div className="flex justify-between gap-2 md:gap-4 mt-3 pl-8 pr-2">
+                     {daysData.map((data, i) => (
+                        <div key={i} className="flex-1 text-center">
+                          <span className="text-sm font-semibold text-white">{data.dayName}</span>
+                          <p className="text-[10px] text-[#64748B]">{data.fullDate}</p>
+                        </div>
+                     ))}
+                  </div>
+                </div>
+
+              </div>
+            );
+          })()}
+
           {activeTab === 'videos' && <YouTubeSection />}
           {activeTab === 'reports' && <ReportSection />}
         </main>
@@ -922,7 +1437,7 @@ const Dashboard = () => {
             className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
             onClick={() => setShowAppForm(false)}>
             <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }}
-              className="card p-6 max-w-md w-full" onClick={e => e.stopPropagation()}>
+              className="premium-card p-6 max-w-md w-full" onClick={e => e.stopPropagation()}>
               <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
                 <Briefcase className="w-5 h-5 text-[#818CF8]" /> Add Application
               </h2>

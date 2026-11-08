@@ -77,3 +77,86 @@ input[type="time"]::-webkit-datetime-edit-minute-field {
   color: #F8FAFC;
 }
 
+
+        
+
+/* GLOBAL LIGHT MODE OVERRIDES */
+.light-mode body { background-color: #f3f4f6 !important; color: #111827 !important; }
+
+/* হেডার এবং সাইডবার */
+.light-mode header { background-color: rgba(255, 255, 255, 0.9) !important; border-bottom-color: #e5e7eb !important; }
+.light-mode header .text-white { color: #111827 !important; }
+.light-mode header .bg-\[\#161B2E\] { background-color: #f3f4f6 !important; }
+.light-mode aside { background-color: #ffffff !important; border-right-color: #e5e7eb !important; }
+.light-mode aside .bg-\[\#0F1420\] { background-color: #f9fafb !important; }
+.light-mode aside .text-white { color: #111827 !important; }
+.light-mode aside .text-\[\#9CA3AF\] { color: #4b5563 !important; }
+
+/* নরমাল কার্ড */
+.light-mode .card { background-color: #ffffff !important; border-color: #e5e7eb !important; }
+.light-mode .card .text-white, .light-mode .bg-\[\#0A0E1A\] .text-white { color: #111827 !important; }
+.light-mode .card .text-\[\#6B7280\], .light-mode .card .text-\[\#9CA3AF\] { color: #4b5563 !important; }
+.light-mode .card .bg-\[\#0F1420\] { background-color: #f9fafb !important; }
+
+/* === এক্সেপশন: যে কার্ডগুলো ডার্ক থাকবে === */
+/* XP Points কার্ড (লেখা সাদা থাকবে) */
+.light-mode .bg-gradient-to-br.from-\[\#2D1B36\] .text-white { color: #ffffff !important; }
+.light-mode .bg-gradient-to-br.from-\[\#2D1B36\] .text-\[\#6B7280\] { color: #d1d5db !important; }
+
+/* মোটিভেশন কোড (লেখা সাদা থাকবে) */
+.light-mode .bg-gradient-to-br.from-\[\#161B2E\] .text-white\/90 { color: rgba(255,255,255,0.9) !important; }
+
+/* AI Coach চ্যাট বক্স (ব্যাকগ্রাউন্ড লাইট, লেখা ডার্ক) */
+.light-mode .bg-\[\#0F1420\] { background-color: #f9fafb !important; }
+.light-mode .bg-\[\#0F1420\] p.text-\[\#E5E7EB\] { color: #374151 !important; }
+
+/* ইনপুট ফিল্ড */
+.light-mode .input-field { background-color: #ffffff !important; border-color: #d1d5db !important; color: #111827 !important; }
+
+/* ব্যাজ এবং আইকন */
+.light-mode .bg-\[\#6366F1\]\/15 { background-color: #e0e7ff !important; }
+.light-mode .text-\[\#818CF8\] { color: #4f46e5 !important; }
+
+        
+/* === PREMIUM UI OVERRIDES (Fino/a Style) === */
+.premium-card {
+  background: linear-gradient(145deg, rgba(22, 27, 46, 0.6) 0%, rgba(10, 14, 26, 0.8) 100%) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3), inset 0 1px 0 0 rgba(255, 255, 255, 0.05) !important;
+  border-radius: 20px !important;
+}
+
+.premium-card:hover {
+  border-color: rgba(99, 102, 241, 0.4) !important;
+  box-shadow: 0 8px 32px 0 rgba(99, 102, 241, 0.15), inset 0 1px 0 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+.premium-sidebar {
+  background: linear-gradient(180deg, #0F1420 0%, #0A0E1A 100%) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
+  box-shadow: 4px 0 24px rgba(0,0,0,0.4) !important;
+}
+
+.premium-header {
+  background: rgba(10, 14, 26, 0.7) !important;
+  backdrop-filter: blur(20px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+/* লাইট মোডে প্রিমিয়াম লুক */
+.light-mode .premium-card {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.9) 0%, rgba(243, 244, 246, 0.9) 100%) !important;
+  border: 1px solid rgba(0, 0, 0, 0.05) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05), inset 0 1px 0 0 rgba(255, 255, 255, 0.5) !important;
+}
+.light-mode .premium-sidebar {
+  background: #ffffff !important;
+  border-right: 1px solid #e5e7eb !important;
+  box-shadow: 4px 0 24px rgba(0,0,0,0.03) !important;
+}
+.light-mode .premium-header {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border-bottom: 1px solid #e5e7eb !important;
+}
