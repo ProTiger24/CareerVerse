@@ -157,3 +157,22 @@ async def viva_grade(subject: str, conversation: list) -> dict:
     except Exception as e:
         print(f"Error in viva_grade: {e}")
         return {"error": str(e)}
+
+async def generate_report_summary(report_data: str) -> str:
+    """রিপোর্টের ডাটা থেকে AI সামারি তৈরি করার জন্য"""
+    prompt = f"""
+    Please provide a concise, professional, and encouraging summary based on the following student report data:
+    
+    {report_data}
+    
+    Return only the summary text.
+    """
+    try:
+        response = await client.aio.models.generate_content(
+            model=MODEL_NAME,
+            contents=prompt
+        )
+        return response.text
+    except Exception as e:
+        print(f"Error in generate_report_summary: {e}")
+        return "Could not generate report summary at this time."
