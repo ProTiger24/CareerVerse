@@ -12,8 +12,13 @@ from dotenv import load_dotenv
 # .env ফাইল থেকে ইমেইল এবং পাসওয়ার্ড লোড করা
 load_dotenv()
 
+# === Render এবং লোকাল—দুই জায়গায় কাজ করার জন্য স্মার্ট পাথ ডিটেকশন ===
+key_path = "serviceAccountKey.json"
+if os.path.exists("/etc/secrets/serviceAccountKey.json"):
+    key_path = "/etc/secrets/serviceAccountKey.json"
+
 # ফায়ারবেস অ্যাডমিন সেটআপ
-cred = credentials.Certificate("serviceAccountKey.json")
+cred = credentials.Certificate(key_path)
 firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://careerverse-f0a15-default-rtdb.firebaseio.com/' 
 })
@@ -49,9 +54,8 @@ def check_and_send_reminders():
 
     for user_id, user_data in users.items():
         email = None
-        user_name = "Student" # ডিফল্ট নাম
+        user_name = "Student"
         
-        # ১. ডাটাবেস থেকে নাম এবং ইমেইল খোঁজা
         profile_data = user_data.get('profile', {})
         if profile_data:
             user_name = profile_data.get('displayName', user_name)
@@ -59,27 +63,22 @@ def check_and_send_reminders():
             
         email = email or user_data.get('email')
         
-        # ২. যদি ডাটাবেসে ইমেইল না থাকে, তবে Firebase Auth থেকে আনা
         if not email:
             try:
                 user_record = auth.get_user(user_id)
                 email = user_record.email
                 if user_record.display_name:
                     user_name = user_record.display_name
-                print(f"ℹ️ Fetched email from Auth for {user_id}: {email}")
             except Exception as e:
-                print(f"⚠️ Could not fetch Auth user {user_id}: {e}")
+                pass
 
         if not email:
-            print(f"⚠️ Skipping user {user_id}: Email not found anywhere.")
             continue
 
         tasks = user_data.get('tasks', {})
         if not tasks:
-            print(f"ℹ️ User {email}: No tasks found.")
             continue
 
-        # আজকের অসম্পূর্ণ টাস্কগুলো ফিল্টার করা
         incomplete_tasks = []
         for task_id, task in tasks.items():
             task_date = task.get('taskDate', '')
@@ -88,14 +87,11 @@ def check_and_send_reminders():
             if task_date == today_str and not is_completed:
                 incomplete_tasks.append(task.get('title', 'Unnamed Task'))
 
-        # ইমেইল পাঠানোর লজিক
         if incomplete_tasks:
-            print(f"🔍 User {email} has {len(incomplete_tasks)} incomplete tasks today: {incomplete_tasks}")
+            print(f"🔍 User {email} has {len(incomplete_tasks)} incomplete tasks today.")
             
-            # টাস্ক লিস্টকে সুন্দর HTML ফরম্যাটে সাজানো
             task_list_html = "".join([f"<div style='padding: 10px; border-bottom: 1px solid #e5e7eb; color: #1f2937; font-weight: 500;'><span style='color: #6366F1; margin-right: 8px;'>▹</span> {t}</div>" for t in incomplete_tasks])
             
-            # সম্পূর্ণ নতুন প্রফেশনাল ইমেইল টেমপ্লেট (English)
             html_body = f"""
             <!DOCTYPE html>
             <html>
@@ -143,17 +139,6 @@ def check_and_send_reminders():
             """
             
             send_email(email, "Action Required: Incomplete Tasks for Today ⚠️", html_body)
-        else:
-            print(f"✅ User {email}: All tasks for today are completed or none exist.")
 
-# ==========================================
-# ⏰ প্রোডাকশন টাইমার সেটিং (প্রতিদিন রাত ৮টা)
-# ==========================================
-schedule.every().day.at("20:00").do(check_and_send_reminders)
-
-print("🚀 Email Reminder Service Started. It will run daily at 20:00 (8:00 PM).")
-
-# স্ক্রিপ্ট চালু রাখার লুপ
-while True:
-    schedule.run_pending()
-    time.sleep(60)
+# === এখানে আর কোনো while True লুপ নেই ===
+# কারণ main.py থেকে থ্রেড হিসেবে এটি চলবে।
