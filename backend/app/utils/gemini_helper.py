@@ -38,10 +38,10 @@ async def generate_quiz(subject: str, chapter: str, topic: str, num_mcq: int, nu
     Return the response strictly as a JSON object with the following structure:
     {{
         "mcqs": [
-            {{"question": "Question text?", "options": ["A", "B", "C", "D"], "answer": "A"}}
+            {{"id": 1, "question": "Question text?", "options": ["A", "B", "C", "D"], "answer": "A"}}
         ],
-        "short_questions": [
-            {{"question": "Question text?"}}
+        "shorts": [
+            {{"id": 1, "question": "Question text?"}}
         ]
     }}
     """
@@ -54,7 +54,7 @@ async def generate_quiz(subject: str, chapter: str, topic: str, num_mcq: int, nu
         return json.loads(response.text)
     except Exception as e:
         print(f"Error in generate_quiz: {e}")
-        return {"mcqs": [], "short_questions": [], "error": str(e)}
+        return {"mcqs": [], "shorts": [], "error": str(e)}
 
 async def grade_quiz_answers(quiz: dict, answers: dict) -> dict:
     prompt = f"""

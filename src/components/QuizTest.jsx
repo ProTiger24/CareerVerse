@@ -36,9 +36,16 @@ const QuizTest = () => {
     );
     setLoading(false);
     if (res.success) {
-      setQuiz(res.quiz);
-      setAnswers({});
-      setStep('quiz');
+      // চেক করা কুইজে প্রশ্ন আছে কি না
+      if (!res.quiz.mcqs && !res.quiz.shorts) {
+        setError('AI returned an empty quiz. Please try again.');
+      } else if ((!res.quiz.mcqs || res.quiz.mcqs.length === 0) && (!res.quiz.shorts || res.quiz.shorts.length === 0)) {
+        setError('AI returned an empty quiz. Please try again.');
+      } else {
+        setQuiz(res.quiz);
+        setAnswers({});
+        setStep('quiz');
+      }
     } else {
       setError('Failed to generate quiz: ' + res.error);
     }
